@@ -18,28 +18,41 @@ let config = {
   }
 }
 
-let cursors, player
 let game = new Phaser.Game(config)
 
 function preload () {
   this.load.image('logo', 'assets/logo.png')
+  this.load.image('bullet', 'assets/logo.png')
+
+  this.load.scenePlugin('WeaponPlugin', 'node_modules/phaser3-weapon-plugin/dist/WeaponPlugin.min.js', null, 'weapons') // TODO: fix plugin path
 }
 
 function create () {
   // setup controls
-  cursors = this.input.keyboard.createCursorKeys()
+  this.cursors = this.input.keyboard.createCursorKeys()
 
   // add elements to scene
-  player = this.physics.add.image(400, 300, 'logo')
-  player.setCollideWorldBounds(true)
+  this.weapon = this.weapons.add(30, 'bullet')
+  this.weapon.debugPhysics = true
+
+  this.player = this.physics.add.image(0, 300, 'logo')
+  this.player.setCollideWorldBounds(true)
+
+  // setup physics
+  this.physics.add.existing(this.player)
+  this.weapon.trackSprite(this.player, 0, 0, true)
 }
 
 function update () {
-  player.setVelocity(0)
+  this.player.setVelocity(0)
 
-  if (cursors.up.isDown) {
-    player.setVelocityY(-300)
-  } else if (cursors.down.isDown) {
-    player.setVelocityY(300)
+  if (this.cursors.up.isDown) {
+    this.player.setVelocityY(-300)
+  } else if (this.cursors.down.isDown) {
+    this.player.setVelocityY(300)
+  }
+
+  if (this.cursors.space.isDown) {
+    this.weapon.fire()
   }
 }
