@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import TerrainGenerator from './terrain'
 
 let config = {
   type: Phaser.AUTO,
@@ -6,8 +7,8 @@ let config = {
   width: 800,
   height: 600,
   physics: {
-    default: 'arcade',
-    arcade: {
+    default: 'matter',
+    matter: {
       debug: true
     }
   },
@@ -23,36 +24,24 @@ let game = new Phaser.Game(config)
 function preload () {
   this.load.image('player', 'assets/player.png')
   this.load.image('bullet', 'assets/bullet.png')
-
-  this.load.scenePlugin('WeaponPlugin', 'node_modules/phaser3-weapon-plugin/dist/WeaponPlugin.min.js', null, 'weapons') // TODO: fix plugin path
 }
 
 function create () {
-  // setup controls
   this.cursors = this.input.keyboard.createCursorKeys()
+  this.matter.world.setBounds().disableGravity()
 
-  // add elements to scene
-  this.weapon = this.weapons.add(30, 'bullet')
-  this.weapon.debugPhysics = true
+  this.player = this.matter.add.image(50, 300, 'player')
 
-  this.player = this.physics.add.image(0, 300, 'player')
-  this.player.setCollideWorldBounds(true)
-
-  // setup physics
-  this.physics.add.existing(this.player)
-  this.weapon.trackSprite(this.player, 0, 0, true)
+  this.terrain = new TerrainGenerator(game, this)
+  this.terrain.nextLine()
 }
 
 function update () {
   this.player.setVelocity(0)
 
   if (this.cursors.up.isDown) {
-    this.player.setVelocityY(-300)
+    this.player.setVelocityY(-8)
   } else if (this.cursors.down.isDown) {
-    this.player.setVelocityY(300)
-  }
-
-  if (this.cursors.space.isDown) {
-    this.weapon.fire()
+    this.player.setVelocityY(8)
   }
 }
