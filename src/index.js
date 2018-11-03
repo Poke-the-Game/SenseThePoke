@@ -1,16 +1,24 @@
-import 'phaser'
+import Phaser from 'phaser'
 
 let config = {
   type: Phaser.AUTO,
-  parent: 'phaser-example',
+  parent: 'pokethegame',
   width: 800,
   height: 600,
+  physics: {
+    default: 'arcade',
+    arcade: {
+      debug: true
+    }
+  },
   scene: {
     preload: preload,
-    create: create
+    create: create,
+    update: update
   }
 }
 
+let cursors, player
 let game = new Phaser.Game(config)
 
 function preload () {
@@ -18,14 +26,20 @@ function preload () {
 }
 
 function create () {
-  let logo = this.add.image(400, 150, 'logo')
+  // setup controls
+  cursors = this.input.keyboard.createCursorKeys()
 
-  this.tweens.add({
-    targets: logo,
-    y: 450,
-    duration: 2000,
-    ease: 'Power2',
-    yoyo: true,
-    loop: -1
-  })
+  // add elements to scene
+  player = this.physics.add.image(400, 300, 'logo')
+  player.setCollideWorldBounds(true)
+}
+
+function update () {
+  player.setVelocity(0)
+
+  if (cursors.up.isDown) {
+    player.setVelocityY(-300)
+  } else if (cursors.down.isDown) {
+    player.setVelocityY(300)
+  }
 }
