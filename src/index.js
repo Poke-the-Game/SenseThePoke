@@ -21,8 +21,8 @@ let config = {
 let game = new Phaser.Game(config)
 
 function preload () {
-  this.load.image('logo', 'assets/logo.png')
-  this.load.image('bullet', 'assets/logo.png')
+  this.load.image('player', 'assets/player.png')
+  this.load.image('bullet', 'assets/bullet.png')
 
   this.load.scenePlugin('WeaponPlugin', 'node_modules/phaser3-weapon-plugin/dist/WeaponPlugin.min.js', null, 'weapons') // TODO: fix plugin path
 }
@@ -35,7 +35,7 @@ function create () {
   this.weapon = this.weapons.add(30, 'bullet')
   this.weapon.debugPhysics = true
 
-  this.player = this.physics.add.image(0, 300, 'logo')
+  this.player = this.physics.add.image(0, 300, 'player')
   this.player.setCollideWorldBounds(true)
 
   // setup physics
