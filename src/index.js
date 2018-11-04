@@ -80,6 +80,7 @@ function create () {
 function update () {
   this.player.setPosition(
     positionX, this.player.body.position.y)
+  this.player.setAngle(0)
 
   if (this.cursors.up.isDown) {
     this.player.setVelocityY(-8)
