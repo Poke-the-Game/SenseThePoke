@@ -24,6 +24,7 @@ let gameConfig = {
 let game = new Phaser.Game(gameConfig)
 let positionX = 50
 let positionY = 300
+let velocityY = 0
 
 function preload () {
   this.load.image('player', 'assets/player.png')
@@ -47,6 +48,7 @@ function create () {
       return
     }
 
+    // calibration
     let avg = -1
     let num = 10
     if (this.data_chain.length < num) {
@@ -65,15 +67,15 @@ function create () {
       return
     }
 
+    // compute sensor strength
     let diff = data - avg
 
     let minY = -8
     let maxY = 8
-    let velocityY = Math.min(Math.max(minY, diff), maxY)
+    velocityY = Math.min(Math.max(minY, diff), maxY)
     velocityY *= -1
 
-    this.player.setVelocityY(velocityY)
-    // console.log(avg, data, diff, velocityY)
+    console.log(avg, data, diff, velocityY)
   })
 }
 
@@ -86,5 +88,7 @@ function update () {
     this.player.setVelocityY(-8)
   } else if (this.cursors.down.isDown) {
     this.player.setVelocityY(8)
+  } else {
+    this.player.setVelocityY(velocityY)
   }
 }
