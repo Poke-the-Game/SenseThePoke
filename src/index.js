@@ -36,8 +36,11 @@ function create () {
   this.cursors = this.input.keyboard.createCursorKeys()
   this.matter.world.setBounds().disableGravity()
 
-  this.player = this.matter.add.image(50, positionX, 'player')
+  this.player = this.matter.add.image(50, positionY, 'player')
   this.player.body.label = 'player'
+
+  this.lastShotTime = -1
+  this.bullets = []
 
   this.terrain = new TerrainGenerator(game, this)
   this.time.addEvent({
@@ -101,6 +104,17 @@ function update (time, delta) {
   // terrain
   this.terrain.update()
 
+  // bullets
+  for (let cur of this.bullets) {
+    cur.gameObject.setVelocityX(cur.velocity)
+
+    if (cur.gameObject.body.position.x > game.config.width - 20) {
+      this.matter.world.remove(cur.gameObject)
+      cur.gameObject.setActive(false)
+      cur.gameObject.setVisible(false)
+    }
+  }
+
   // don't do anything else if game is over
   if (!running) {
     return
@@ -118,6 +132,21 @@ function update (time, delta) {
     this.player.setVelocityY(8)
   } else {
     this.player.setVelocityY(velocityY)
+  }
+
+  if (this.cursors.space.isDown) {
+    let diff = time - this.lastShotTime
+    if (diff > 100) {
+      this.lastShotTime = time
+      let cur = this.matter.add.image(
+        positionX + 20, this.player.body.position.y, 'bullet')
+      cur.body.label = 'bullet'
+
+      this.bullets.push({
+        gameObject: cur,
+        velocity: 5
+      })
+    }
   }
 
   // score
