@@ -46,6 +46,17 @@ function create () {
     repeat: -1
   })
 
+  this.score = 0
+  this.scoreboard = this.add.text(
+    this.game.config.width, 0, 'undef',
+    {
+      fontFamily: 'Arial',
+      fontSize: 32,
+      color: '#ffff00'
+    }
+  )
+  this.scoreboard.setOrigin(1, 0)
+
   let ws = new window.WebSocket(config.ws_url)
   this.data_chain = []
   ws.addEventListener('message', ({ data }) => {
@@ -86,10 +97,12 @@ function create () {
 }
 
 function update (time, delta) {
+  // player handling
   this.player.setPosition(
     positionX, this.player.body.position.y)
   this.player.setAngle(0)
 
+  // keyboard controls
   if (this.cursors.up.isDown) {
     this.player.setVelocityY(-8)
   } else if (this.cursors.down.isDown) {
@@ -98,5 +111,10 @@ function update (time, delta) {
     this.player.setVelocityY(velocityY)
   }
 
+  // terrain
   this.terrain.update()
+
+  // score
+  this.score = Math.round(time / 100)
+  this.scoreboard.setText(`Score: ${this.score}`)
 }
