@@ -87,9 +87,12 @@ class TerrainGenerator {
     let targetWidth = Phaser.Math.Between(20, 50)
     let targetHeight = Phaser.Math.Between(20, 50)
 
+    let draws = ['asteroid', 'asteroid', 'asteroid', 'asteroid', 'asteroid', 'skylol', 'tardis']
+    let choice = draws[Math.floor(Math.random() * draws.length)]
+
     let cur = this.scene.matter.add.image(
       gw - targetWidth, Phaser.Math.Between(gh / 5, gh * 4 / 5),
-      (this.objects.length % 10 != 0) ? 'asteroid' : 'skylol')
+      choice)
 
     cur.setScale(targetWidth / cur.width, targetHeight / cur.height)
 
