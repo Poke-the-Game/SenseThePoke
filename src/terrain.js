@@ -69,6 +69,12 @@ class TerrainGenerator {
     for (let cur of this.objects) {
       cur.gameObject.setVelocityX(cur.velocity)
       cur.gameObject.setAngularVelocity(cur.angVelocity)
+
+      if (cur.gameObject.body.position.x < 20) {
+        this.scene.matter.world.remove(cur.gameObject)
+        cur.gameObject.setActive(false)
+        cur.gameObject.setVisible(false)
+      }
     }
   }
 
