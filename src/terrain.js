@@ -72,7 +72,7 @@ class TerrainGenerator {
     let h = Phaser.Math.Between(20, 50)
 
     let cur = this.scene.add.rectangle(
-      gw - 100, gh + Phaser.Math.Between(-gh / 2, gh / 2),
+      gw - 100, Phaser.Math.Between(gh / 5, gh * 4 / 5),
       w, h)
     this.scene.matter.add.gameObject(cur)
 
