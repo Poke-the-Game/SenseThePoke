@@ -115,6 +115,14 @@ function update (time, delta) {
     }
   }
 
+  // possible restart
+  let key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
+  if (Phaser.Input.Keyboard.JustDown(key)) {
+    this.scene.restart()
+    this.score = 0
+    running = true
+  }
+
   // don't do anything else if game is over
   if (!running) {
     return
@@ -150,7 +158,7 @@ function update (time, delta) {
   }
 
   // score
-  this.score = Math.round(time / 100)
+  this.score += 1 // TODO: this is bad...
   this.scoreboard.setText(`Score: ${this.score}`)
 }
 
