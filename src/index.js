@@ -36,9 +36,15 @@ function create () {
   this.matter.world.setBounds().disableGravity()
 
   this.player = this.matter.add.image(50, positionX, 'player')
+  this.player.body.label = 'player'
 
   this.terrain = new TerrainGenerator(game, this)
-  this.terrain.nextLine()
+  this.time.addEvent({
+    delay: 2000,
+    callback: this.terrain.spawnObstacle,
+    callbackScope: this.terrain,
+    repeat: -1
+  })
 
   let ws = new window.WebSocket(config.ws_url)
   this.data_chain = []
@@ -75,11 +81,11 @@ function create () {
     velocityY = Math.min(Math.max(minY, diff), maxY)
     velocityY *= -1
 
-    console.log(avg, data, diff, velocityY)
+    // console.log(avg, data, diff, velocityY)
   })
 }
 
-function update () {
+function update (time, delta) {
   this.player.setPosition(
     positionX, this.player.body.position.y)
   this.player.setAngle(0)
@@ -91,4 +97,6 @@ function update () {
   } else {
     this.player.setVelocityY(velocityY)
   }
+
+  this.terrain.update()
 }
