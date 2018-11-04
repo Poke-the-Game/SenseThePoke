@@ -33,19 +33,29 @@ class TerrainGenerator {
         // game over
         if (bodyA.label === 'player' && bodyB.label === 'obstacle') {
           this.scene.matter.world.remove(bodyB)
+          bodyB.gameObject.setActive(false)
+          bodyB.gameObject.setVisible(false)
+
           this.game.gameOver(this.game, this.scene)
         }
         if (bodyA.label === 'obstacle' && bodyB.label === 'player') {
           this.scene.matter.world.remove(bodyA)
+          bodyA.gameObject.setActive(false)
+          bodyA.gameObject.setVisible(false)
+
           this.game.gameOver(this.game, this.scene)
         }
 
         // something else
         if (bodyA.label === 'obstacle' && bodyB.label === 'Rectangle Body') {
           this.scene.matter.world.remove(bodyA)
+          bodyA.gameObject.setActive(false)
+          bodyA.gameObject.setVisible(false)
         }
         if (bodyA.label === 'Rectangle Body' && bodyB.label === 'obstacle') {
           this.scene.matter.world.remove(bodyB)
+          bodyB.gameObject.setActive(false)
+          bodyB.gameObject.setVisible(false)
         }
       }
     )
@@ -68,13 +78,14 @@ class TerrainGenerator {
     let gw = this.game.config.width
     let gh = this.game.config.height
 
-    let w = Phaser.Math.Between(20, 50)
-    let h = Phaser.Math.Between(20, 50)
+    let targetWidth = Phaser.Math.Between(20, 50)
+    let targetHeight = Phaser.Math.Between(20, 50)
 
-    let cur = this.scene.add.rectangle(
-      gw - w, Phaser.Math.Between(gh / 5, gh * 4 / 5),
-      w, h)
-    this.scene.matter.add.gameObject(cur)
+    let cur = this.scene.matter.add.image(
+      gw - targetWidth, Phaser.Math.Between(gh / 5, gh * 4 / 5),
+      (this.objects.length % 10 != 0) ? 'asteroid' : 'skylol')
+
+    cur.setScale(targetWidth / cur.width, targetHeight / cur.height)
 
     cur.body.label = 'obstacle'
 

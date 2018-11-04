@@ -30,6 +30,8 @@ let running = true
 function preload () {
   this.load.image('player', 'assets/player.png')
   this.load.image('bullet', 'assets/bullet.png')
+  this.load.image('skylol', 'assets/skylol.png')
+  this.load.image('asteroid', 'assets/asteroid.png')
 }
 
 function create () {
