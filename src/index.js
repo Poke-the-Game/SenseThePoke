@@ -41,7 +41,7 @@ function create () {
 
   this.terrain = new TerrainGenerator(game, this)
   this.time.addEvent({
-    delay: 2000,
+    delay: 500,
     callback: this.terrain.spawnObstacle,
     callbackScope: this.terrain,
     repeat: -1
