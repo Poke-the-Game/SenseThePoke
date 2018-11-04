@@ -29,15 +29,15 @@ class TerrainGenerator {
     // collision handling
     this.scene.matter.world.on(
       'collisionstart',
-      function (event, bodyA, bodyB) {
+      (event, bodyA, bodyB) => {
         // game over
         if (bodyA.label === 'player' && bodyB.label === 'obstacle') {
-          console.log('BOOM')
           this.scene.matter.world.remove(bodyB)
+          this.game.gameOver(this.game, this.scene)
         }
         if (bodyA.label === 'obstacle' && bodyB.label === 'player') {
-          console.log('BOOM')
           this.scene.matter.world.remove(bodyA)
+          this.game.gameOver(this.game, this.scene)
         }
 
         // something else

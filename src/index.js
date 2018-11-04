@@ -25,6 +25,7 @@ let game = new Phaser.Game(gameConfig)
 let positionX = 50
 let positionY = 300
 let velocityY = 0
+let running = true
 
 function preload () {
   this.load.image('player', 'assets/player.png')
@@ -97,6 +98,14 @@ function create () {
 }
 
 function update (time, delta) {
+  // terrain
+  this.terrain.update()
+
+  // don't do anything else if game is over
+  if (!running) {
+    return
+  }
+
   // player handling
   this.player.setPosition(
     positionX, this.player.body.position.y)
@@ -111,10 +120,27 @@ function update (time, delta) {
     this.player.setVelocityY(velocityY)
   }
 
-  // terrain
-  this.terrain.update()
-
   // score
   this.score = Math.round(time / 100)
   this.scoreboard.setText(`Score: ${this.score}`)
+}
+
+game.gameOver = (game, scene) => {
+  console.log('BOOM')
+  running = false
+
+  // handle simulation
+  scene.matter.world.remove(scene.player)
+  scene.player.setActive(false)
+  scene.player.setVisible(false)
+
+  // show score
+  scene.scoreboard.setText(`Final score: ${scene.score}`)
+  scene.scoreboard.setStyle({
+    fontSize: 64,
+    color: '#ff0000'
+  })
+
+  scene.scoreboard.setOrigin(0.5, 0.5)
+  scene.scoreboard.setPosition(game.config.width / 2, game.config.height / 2)
 }
