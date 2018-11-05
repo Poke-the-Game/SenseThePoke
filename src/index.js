@@ -24,8 +24,11 @@ let gameConfig = {
 let game = new Phaser.Game(gameConfig)
 let positionX = 50
 let positionY = 300
+let targetPositionY = positionY
 let velocityY = 0
-let running = true
+let running = false
+let lastSpawnTime = -1
+let lastRestart = 0
 
 function preload () {
   this.load.image('player', 'assets/player.png')
@@ -46,12 +49,12 @@ function create () {
   this.bullets = []
 
   this.terrain = new TerrainGenerator(game, this)
-  this.time.addEvent({
-    delay: 500,
-    callback: this.terrain.spawnObstacle,
-    callbackScope: this.terrain,
-    repeat: -1
-  })
+  // this.time.addEvent({
+  //   delay: 1000,
+  //   callback: this.terrain.spawnObstacle,
+  //   callbackScope: this.terrain,
+  //   repeat: -1
+  // })
 
   this.score = 0
   this.scoreboard = this.add.text(
@@ -78,6 +81,10 @@ function create () {
     if (this.data_chain.length < num) {
       this.data_chain.push(data)
       console.log(`Waiting for more data ${this.data_chain.length}/${num}`)
+
+      if (this.data_chain.length === num - 1) {
+        running = true
+      }
     } else {
       let sum = this.data_chain.reduce(
         (previous, current) => current + previous, 0)
@@ -93,11 +100,14 @@ function create () {
 
     // compute sensor strength
     let diff = data - avg
+    diff /= 30
 
-    let minY = -8
-    let maxY = 8
-    velocityY = Math.min(Math.max(minY, diff), maxY)
-    velocityY *= -1
+    targetPositionY = game.config.width / 2 * (1 - diff)
+
+    // let minY = -8
+    // let maxY = 8
+    // velocityY = Math.min(Math.max(minY, diff), maxY)
+    // velocityY *= -1
 
     // console.log(avg, data, diff, velocityY)
   })
@@ -106,6 +116,13 @@ function create () {
 function update (time, delta) {
   // terrain
   this.terrain.update()
+
+  let relTime = time - lastRestart
+  let diff0 = relTime - lastSpawnTime
+  if (diff0 > Math.max(800 - (relTime / 100), 300)) {
+    this.terrain.spawnObstacle()
+    lastSpawnTime = relTime
+  }
 
   // bullets
   for (let cur of this.bullets) {
@@ -124,6 +141,8 @@ function update (time, delta) {
     this.scene.restart()
     this.score = 0
     running = true
+    lastRestart = time
+    lastSpawnTime = 0
   }
 
   // don't do anything else if game is over
@@ -142,7 +161,10 @@ function update (time, delta) {
   } else if (this.cursors.down.isDown) {
     this.player.setVelocityY(8)
   } else {
+    velocityY = targetPositionY - this.player.body.position.y
+    velocityY /= 10
     this.player.setVelocityY(velocityY)
+    // this.player.setVelocityY(velocityY)
   }
 
   if (this.cursors.space.isDown) {
